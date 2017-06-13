@@ -8,39 +8,6 @@ sap.ui.jsview("sapui5.demo.mvcapp.view.Master", {
     },
     createContent: function (oController) {
 
-        var oData = {
-            "CountSuppliers": "2",
-            "Suppliers": [
-                {
-                    "ID": 0,
-                    "Name": "Exotic Liquids",
-                    "Address": {
-                        "Street": "NE 228th",
-                        "City": "Sammamish",
-                        "State": "WA",
-                        "ZipCode": "98074",
-                        "Country": "USA"
-                    }
-                },
-                {
-                    "ID": 1,
-                    "Name": "Tokyo Traders",
-                    "Address": {
-                        "Street": "NE 40th",
-                        "City": "Redmond",
-                        "State": "WA",
-                        "ZipCode": "98052",
-                        "Country": "USA"
-                    }
-                }
-            ]
-        };
-
-        // model creation and setting data
-        var oModel = sap.ui.model.json.JSONModel();
-        oModel.setData(oData);
-
-        sap.ui.getCore().setModel(oModel);
 
 
         var aColumns = [
@@ -99,9 +66,6 @@ sap.ui.jsview("sapui5.demo.mvcapp.view.Master", {
         return oPageMaster;
 
 
-     /*   var oApp = new sap.m.App("myApp");
-        oApp.addPage(oPageMaster);
-        oApp.placeAt("content");*/
 
     }
 
