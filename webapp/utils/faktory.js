@@ -47,7 +47,7 @@ var log = (function () {
 
     return {
         add: function (msg) { log += msg + "\n"; },
-        show: function () { alert(log); log = ""; }
+        show: function () { console.log(log); log = ""; }
     }
 })();
 
@@ -66,3 +66,5 @@ function run() {
 
     log.show();
 }
+
+var xxx =run();
