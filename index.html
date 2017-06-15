@@ -50,9 +50,9 @@
 
         oModel.setData(oData);
 
-        sap.ui.getCore().setModel(oModel);
 
-        var oPageMasterView = sap.ui.view("masterPage", {
+
+        /*var oPageMasterView = sap.ui.view("masterPage", {
             type: sap.ui.core.mvc.ViewType.JS,
             viewName: "sapui5.demo.mvcapp.view.Master",
         });
@@ -66,10 +66,17 @@
             initialPage: "masterPage"
         });
 
-        oApp.addPage(oPageMasterView).addPage(oPageDetail);
+        oApp.addPage(oPageMasterView);
+        oApp.addPage(oPageDetail);
 
-        oApp.placeAt("content");
-
+        oApp.placeAt("content");*/
+        sap.ui.getCore().setModel(oModel);
+        var oAppView = sap.ui.view("appview", {
+            type: sap.ui.core.mvc.ViewType.XML,
+            viewName: "sapui5.demo.mvcapp.view.App",
+        });
+        var oApp = oAppView.byId("app");
+        oAppView.placeAt("content");
 
     </script>
 </head>

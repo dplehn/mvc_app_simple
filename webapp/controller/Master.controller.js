@@ -9,11 +9,15 @@ sap.ui.define([
         {
             init: alert("xxxxxxxxx"),
             onListPress: function (oEvent) {
-                var sPageId = "detailPage";
+                // var sPageId = "detailPage";
+                var sPageId = oApp.getPages()[1].getId()
                 oApp.to(sPageId);
+
+                /* hier wird der bindingcontext gesetzt */
+
                 var oPage = oApp.getPage(sPageId);
-                var oContenxt = oEvent.getSource().getBindingContext();
-                oPage.setBindingContext(oContenxt);
+                var oContext = oEvent.getSource().getBindingContext();
+                oPage.setBindingContext(oContext);
             }
         });
 });
