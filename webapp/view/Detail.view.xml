@@ -1,6 +1,6 @@
 <mvc:View
         controllerName="sapui5.demo.mvcapp.controller.Detail"
-        xmlns:mvc="sap.ui.core.mvc"
+        xmlns:mvc="sap.ui.core"
         xmlns="sap.m">
     <Page
             navButtonPress="onNavPress"

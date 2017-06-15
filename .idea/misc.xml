@@ -4,4 +4,8 @@
     <exe-path />
     <config-path />
   </component>
+  <component name="ProjectResources">
+    <resource url="sap.m" location="$PROJECT_DIR$/../sapui5_xsd/sap.m.xsd" />
+    <resource url="sap.ui.core" location="$PROJECT_DIR$/../sapui5_xsd/sap.ui.core.xsd" />
+  </component>
 </project>
