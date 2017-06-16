@@ -18,65 +18,29 @@
 
 
     <script>
-        var oData = {
-            "CountSuppliers": "2",
-            "Suppliers": [
-                {
-                    "ID": 0,
-                    "Name": "Exotic Liquids",
-                    "Address": {
-                        "Street": "NE 228th",
-                        "City": "Sammamish",
-                        "State": "WA",
-                        "ZipCode": "98074",
-                        "Country": "USA"
-                    }
-                },
-                {
-                    "ID": 1,
-                    "Name": "Tokyo Traders",
-                    "Address": {
-                        "Street": "NE 40th",
-                        "City": "Redmond",
-                        "State": "WA",
-                        "ZipCode": "98052",
-                        "Country": "USA"
-                    }
-                }
-            ]
-        };
-        // model creation and setting data
-        var oModel = new sap.ui.model.json.JSONModel();
+        var oApp;
 
-        oModel.setData(oData);
-
-
-
-        /*var oPageMasterView = sap.ui.view("masterPage", {
-            type: sap.ui.core.mvc.ViewType.JS,
-            viewName: "sapui5.demo.mvcapp.view.Master",
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/core/ComponentContainer",
+                "sapui5/demo/mvcapp/Component"
+            ], function(ComponentContainer, Component) {
+                new ComponentContainer({
+                    height: "100%",
+                    component: new Component({
+                        id: "mvcAppComponent"
+                    })
+                }).placeAt("content");
+            });
         });
 
-        var oPageDetail = sap.ui.view("detailPage", {
-            type: sap.ui.core.mvc.ViewType.JS,
-            viewName: "sapui5.demo.mvcapp.view.Detail",
-        });
 
-        var oApp = new sap.m.App({
-            initialPage: "masterPage"
-        });
-
-        oApp.addPage(oPageMasterView);
-        oApp.addPage(oPageDetail);
-
-        oApp.placeAt("content");*/
-        sap.ui.getCore().setModel(oModel);
-        var oAppView = sap.ui.view("appview", {
-            type: sap.ui.core.mvc.ViewType.XML,
-            viewName: "sapui5.demo.mvcapp.view.App",
-        });
-        var oApp = oAppView.byId("app");
-        oAppView.placeAt("content");
+//        var oAppView = sap.ui.view("appview", {
+//            type: sap.ui.core.mvc.ViewType.XML,
+//            viewName: "sapui5.demo.mvcapp.view.App",
+//        });
+//        var oApp = oAppView.byId("app");
+//        oAppView.placeAt("content");
 
     </script>
 </head>
