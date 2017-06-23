@@ -11,7 +11,7 @@ sap.ui.define([
         metadata: {
             "rootView": "sapui5.demo.mvcapp.view.App",
             "config": {
-                "serviceUrl" : "webapp/service/data.json"
+                "serviceUrl": "webapp/service/data.json"
             },
             "routing": {
                 "config": {
@@ -22,29 +22,42 @@ sap.ui.define([
                     "controlAggregation": "pages",
                     "transition": "slide"
                 },
-                "routes": [{
-                    "pattern": "",
-                    "name": "master",
-                    "target": "master"
-                }, {
-                    "pattern": "detail/{ID}",
-                    "name": "detail",
-                    "target": "detail"
-                }],
+                "routes": [
+                    {
+                        "pattern": "",
+                        "name": "page",
+                        "target": "page"
+                    },
+                    {
+                        "pattern": "master",
+                        "name": "master",
+                        "target": "master"
+                    }, {
+                        "pattern": "detail/{ID}",
+                        "name": "detail",
+                        "target": "detail"
+                    }
+
+
+                ],
                 "targets": {
+                    "page": {
+                        "viewName": "Page",
+                        "viewLevel": 1
+                    },
                     "master": {
                         "viewName": "Master",
-                        "viewLevel": 1
+                        "viewLevel": 2
                     },
                     "detail": {
                         "viewName": "Detail",
-                        "viewLevel": 2
+                        "viewLevel": 3
                     }
                 }
             }
         },
 
-        init: function() {
+        init: function () {
             // call the base component's init function
             UIComponent.prototype.init.apply(this, arguments);
             // create the views based on the url/hash
@@ -57,7 +70,7 @@ sap.ui.define([
             console.log(this.getMetadata().getConfig().serviceUrl);
 
             var sServiceModule = this.getMetadata().getConfig().serviceUrl;
-            var sModulPath = jQuery.sap.getModulePath(sServiceModule,".json");
+            var sModulPath = jQuery.sap.getModulePath(sServiceModule, ".json");
 
 
             var oModel = new JSONModel(sServiceModule);

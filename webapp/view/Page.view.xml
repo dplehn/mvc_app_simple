@@ -13,6 +13,7 @@
 				</contentMiddle>
 				<contentRight>
 					<ToggleButton icon="sap-icon://edit" press="onPress" />
+
 				</contentRight>
 			</Bar>
 		</customHeader>
@@ -21,6 +22,7 @@
 				<contentLeft>
 					<ToggleButton text="Pressed" enabled="true" pressed="true" press="onPress" />
 					<ToggleButton text="Pressed &amp; Disabled" enabled="false" pressed="true" press="onPress" />
+					<ToggleButton text="Navigate" enabled="true" pressed="true" press="onNav" />
 				</contentLeft>
 				<contentRight>
 					<ToggleButton icon="sap-icon://action" press="onPress" />
