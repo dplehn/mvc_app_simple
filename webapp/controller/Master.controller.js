@@ -8,16 +8,14 @@ sap.ui.define([
     return Controller.extend("sapui5.demo.mvcapp.controller.Master",
         {
             init: alert("xxxxxxxxx"),
-            onListPress: function (oEvent) {
-                // var sPageId = "detailPage";
-                var sPageId = oApp.getPages()[1].getId()
-                oApp.to(sPageId);
-
-                /* hier wird der bindingcontext gesetzt */
-
-                var oPage = oApp.getPage(sPageId);
-                var oContext = oEvent.getSource().getBindingContext();
-                oPage.setBindingContext(oContext);
+            onListPress: function(oEvent) {
+            // also possible:
+             //var oRouter = this.getOwnerComponent().getRouterFor(this);
+                var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                var oItem = oEvent.getSource();
+                oRouter.navTo("detail", {
+                    ID: oItem.getBindingContext().getProperty("ID")
+                });
             }
         });
 });

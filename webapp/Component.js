@@ -4,47 +4,72 @@
 sap.ui.define([
     "sap/ui/core/UIComponent",
     "sap/ui/model/json/JSONModel"
-], function(UIComponent, JSONModel) {
+], function (UIComponent, JSONModel) {
     "use strict";
+
     return UIComponent.extend("sapui5.demo.mvcapp.Component", {
-        createContent: function() {
-            UIComponent.prototype.createContent.apply(this, arguments);
-            var oData = {
-                "CountSuppliers": "2",
-                "Suppliers": [
-                    {
-                        "ID": 0,
-                        "Name": "Exotic Liquids",
-                        "Address": {
-                            "Street": "NE 228th",
-                            "City": "Sammamish",
-                            "State": "WA",
-                            "ZipCode": "98074",
-                            "Country": "USA"
-                        }
+        metadata: {
+            "rootView": "sapui5.demo.mvcapp.view.App",
+            "config": {
+                "serviceUrl" : "webapp/service/data.json"
+            },
+            "routing": {
+                "config": {
+                    "routerClass": "sap.m.routing.Router",
+                    "viewType": "XML",
+                    "viewPath": "sapui5.demo.mvcapp.view",
+                    "controlId": "app",
+                    "controlAggregation": "pages",
+                    "transition": "slide"
+                },
+                "routes": [{
+                    "pattern": "",
+                    "name": "master",
+                    "target": "master"
+                }, {
+                    "pattern": "detail/{ID}",
+                    "name": "detail",
+                    "target": "detail"
+                }],
+                "targets": {
+                    "master": {
+                        "viewName": "Master",
+                        "viewLevel": 1
                     },
-                    {
-                        "ID": 1,
-                        "Name": "Tokyo Traders",
-                        "Address": {
-                            "Street": "NE 40th",
-                            "City": "Redmond",
-                            "State": "WA",
-                            "ZipCode": "98052",
-                            "Country": "USA"
-                        }
+                    "detail": {
+                        "viewName": "Detail",
+                        "viewLevel": 2
                     }
-                ]
-            };
-            var oModel = new JSONModel();
-            oModel.setData(oData);
-// important to set the model on the component
+                }
+            }
+        },
+
+        init: function() {
+            // call the base component's init function
+            UIComponent.prototype.init.apply(this, arguments);
+            // create the views based on the url/hash
+            this.getRouter().initialize();
+        },
+
+        createContent: function () {
+            var oRootView = UIComponent.prototype.createContent.apply(this, arguments);
+
+            console.log(this.getMetadata().getConfig().serviceUrl);
+
+            var sServiceModule = this.getMetadata().getConfig().serviceUrl;
+            var sModulPath = jQuery.sap.getModulePath(sServiceModule,".json");
+
+
+            var oModel = new JSONModel(sServiceModule);
+
+            //oModel.setData(oData);
+            // important to set the model on the component
             this.setModel(oModel);
-            var oRootView = sap.ui.view("appview", {
-                type: sap.ui.core.mvc.ViewType.XML,
-                viewName: "sapui5.demo.mvcapp.view.App"
-            });
-            oApp = oRootView.byId("app");
+            // var oRootView = sap.ui.view("appview", {
+            //     type: sap.ui.core.mvc.ViewType.XML,
+            //     viewName: "sapui5.demo.mvcapp.view.App"
+            // });
+
             return oRootView;
         }
     });

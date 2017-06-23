@@ -8,11 +8,23 @@
             title="Supplier Detail">
         <content>
             <ObjectHeader
+
                     title="{Name}"
-                    number="ID: {ID}">
+                    number="ID: {ID}"
+                    numberUnit="EUR"
+
+            >
                 <attributes>
                     <ObjectAttribute
-                            text="{Address/Country}" />
+                            text="{Address/Country}"/>
+                    <ObjectAttribute
+                            text="{Address/Country}"/>
+                    <ObjectAttribute
+                            text="{Address/Country}"/>
+                    <ObjectAttribute
+                            text="{Address/Country}"/>
+                    <ObjectAttribute
+                            text="{Address/Country}"/>
                 </attributes>
             </ObjectHeader>
         </content>

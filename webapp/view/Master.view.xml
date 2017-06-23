@@ -8,8 +8,21 @@
                     </Toolbar>
                 </headerToolbar>
                 <columns>
-                    <Column><header><Text text="ID"/></header></Column>
-                    <Column><header><Text text="Name"/></header></Column>
+                    <Column>
+                        <header>
+                            <Text text="ID"/>
+                        </header>
+                    </Column>
+                    <Column>
+                        <header>
+                            <Text text="Name"/>
+                        </header>
+                    </Column>
+                    <Column>
+                        <header>
+                            <Text text="Test"></Text>
+                        </header>
+                    </Column>
                 </columns>
                 <items>
 
@@ -17,12 +30,22 @@
                         <cells>
                             <ObjectIdentifier text="{ID}"/>
                             <ObjectIdentifier text="{Name}"/>
+                            <ObjectIdentifier text="test"/>
+
                         </cells>
                     </ColumnListItem>
                 </items>
             </Table>
-            <Button text="Button" width="100px" id="__button0"/>
-            <Text text="Hallo Detlef" id="__text6"/>
+
+
         </content>
+        <footer>
+            <Bar>
+                <contentRight>
+                    <ToggleButton text="Pressed &amp; Disabled" enabled="false" pressed="true" press="onPress"/>
+                    <ToggleButton icon="sap-icon://action" press="onPress"/>
+                </contentRight>
+            </Bar>
+        </footer>
     </Page>
 </mvc:View>

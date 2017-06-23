@@ -3,13 +3,6 @@
         displayBlock="true"
         xmlns="sap.m">
     <App id="app">
-        <pages>
-            <mvc:XMLView
-                    id="masterPage"
-                    viewName="sapui5.demo.mvcapp.view.Master" />
-            <mvc:XMLView
-                    id="detailPage"
-                    viewName="sapui5.demo.mvcapp.view.Detail" />
-        </pages>
+        <!-- pages will be filled automatically via routing -->
     </App>
 </mvc:View>
