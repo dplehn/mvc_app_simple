@@ -19,6 +19,13 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller'],
                     MessageToast.show(evt.getSource().getId() + " Unpressed");
                 }
                 ;
+
+                // also possible:
+                //var oRouter = this.getOwnerComponent().getRouterFor(this);
+                var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                // var oItem = oEvent.getSource();
+                oRouter.navTo("master");
+
             }
 
 
