@@ -7,7 +7,7 @@ sap.ui.define([
     "use strict";
     return Controller.extend("sapui5.demo.mvcapp.controller.Master",
         {
-            init: alert("xxxxxxxxx"),
+            init: console.log("init master controller"),
             onListPress: function(oEvent) {
             // also possible:
              //var oRouter = this.getOwnerComponent().getRouterFor(this);
