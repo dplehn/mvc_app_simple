@@ -1,31 +1,23 @@
 <mvc:View
         controllerName="sapui5.demo.mvcapp.controller.Detail"
-        xmlns:mvc="sap.ui.core"
+        xmlns:mvc="sap.ui.core.mvc"
         xmlns="sap.m">
     <Page
+            id="page"
             navButtonPress="onNavPress"
             showNavButton="true"
-            title="Supplier Detail">
+            title="Supplier Details">
         <content>
             <ObjectHeader
-
-                    title="{Name}"
-                    number="ID: {ID}"
-                    numberUnit="EUR"
-
-            >
-                <attributes>
-                    <ObjectAttribute
-                            text="{Address/Country}"/>
-                    <ObjectAttribute
-                            text="{Address/Country}"/>
-                    <ObjectAttribute
-                            text="{Address/Country}"/>
-                    <ObjectAttribute
-                            text="{Address/Country}"/>
-                    <ObjectAttribute
-                            text="{Address/Country}"/>
-                </attributes>
+                    id="objectHeader"
+                    title="{
+                         path: 'Name',
+                         formatter: '.toUpperCase'
+                    }"
+                    number="ID: {ID}">
+                <ObjectAttribute
+                        text="{Address/Country}">
+                </ObjectAttribute>
             </ObjectHeader>
         </content>
     </Page>
