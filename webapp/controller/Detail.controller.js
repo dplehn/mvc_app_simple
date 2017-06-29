@@ -11,8 +11,7 @@ sap.ui.define([
          * @public
          */
         onInit: function () {
-            this.getRouter().getRoute("detail").attachPatternMatched(this
-                ._onObjectMatched, this);
+            this.getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
         },
         /* ======================================================= */
         /* event handlers */
