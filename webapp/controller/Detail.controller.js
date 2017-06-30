@@ -1,6 +1,7 @@
 sap.ui.define([
-    "sapui5/demo/mvcapp/controller/BaseController"
-], function (BaseController) {
+    "sapui5/demo/mvcapp/controller/BaseController",
+    "sapui5/demo/mvcapp/extlibs/log4javascript"
+], function (BaseController,log4javascriptjs) {
     "use strict";
     return BaseController.extend("sapui5.demo.mvcapp.controller.Detail", {
         /* ======================================================= */
@@ -21,6 +22,9 @@ sap.ui.define([
          * @function
          */
         onNavPress: function () {
+            var log = log4javascript.getLogger();
+            log.debug("onNavPress");
+
             this.myNavBack("master");
         },
         /* ======================================================= */

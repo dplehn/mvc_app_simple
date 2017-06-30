@@ -8,6 +8,8 @@ sap.ui.define([
     "use strict";
 
     return Controller.extend("sapui5.demo.mvcapp.controller.BaseController", {
+
+
         /**
          * Convenience method for accessing the router.
          * @public
