@@ -4,8 +4,9 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sapui5/demo/mvcapp/extlibs/moment",
-    "sapui5/demo/mvcapp/extlibs/log4javascript"
-], function (Controller,momentjs,log4javascriptjs) {
+    "sapui5/demo/mvcapp/extlibs/log4javascript",
+    "sapui5/demo/mvcapp/extlibs/utils"
+], function (Controller,momentjs,log4javascriptjs,utilsjs) {
     "use strict";
     return Controller.extend("sapui5.demo.mvcapp.controller.Master",
         {
@@ -30,6 +31,7 @@ sap.ui.define([
 
                 // Test the logger
                 log.debug("Hello world!");
+                showenv();
 
             },
 
