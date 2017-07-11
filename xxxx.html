@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Beginner's Guide to JavaScript promises</title>
+
+
+
+    <script type="text/javascript">
+        SyntaxHighlighter.all()
+    </script>
+
+    <style>
+
+        .demoarea{
+            border:2px solid darkbrown;
+            padding:5px;
+        }
+
+        .demoarea img{
+            margin-right: 10px;
+        }
+
+    </style>
+
+    <script>
+
+        var doggies = ['dog1.png', 'dog2.png', 'dog3.png', 'dog4.png', 'dog5.png']
+
+        function getImage(url){
+            return new Promise(function(resolve, reject){
+                var img = new Image()
+                var rand = Math.round( Math.random() * 1000 ) // add random delay to resolve and reject to accentuate asynchronicity
+                img.onload = function(){
+                    setTimeout(function(){
+                        resolve(url)
+                    }, rand)
+                }
+                img.onerror = function(){
+                    setTimeout(function(){
+                        reject(url)
+                    }, rand)
+                }
+                img.src = url
+            })
+        }
+
+        function displayimages(images){
+            var targetimage = images.shift() // process doggies images one at a time
+            if (targetimage){ // if not end of array
+                getImage(targetimage).then(function(url){ // load image then...
+                    var dog = document.createElement('img')
+                    dog.setAttribute('src', url)
+                    doggyplayground.appendChild(dog) // add image to DIV
+                    displayimages(images) // recursion- call displayimages() again to process next image/doggy
+                }).catch(function(url){ // handle an image not loading
+                    console.log('Error loading ' + url)
+                    displayimages(images) // recursion- call displayimages() again to process next image/doggy
+                })
+            }
+        }
+
+        function displayimagesAtOnce(images){
+            var doggypromises = images.map(getImage) // call getImage on each array element and return array of promises
+            Promise.all(doggypromises).then(function(urls){
+                doggyplayground2.innerHTML = ''
+                for (var i=0; i<urls.length; i++){
+                    var dog = document.createElement('img')
+                    dog.setAttribute('src', urls[i])
+                    doggyplayground2.appendChild(dog)
+                }
+            }).catch(function(urls){
+                console.log("Error fetching some images: " + urls)
+            })
+        }
+
+        function displayimagesBestofBothWorlds(images){
+            var doggypromises = images.map(getImage) // call getImage on each array element and return array of promises
+            var sequence = Promise.resolve()
+
+            doggypromises.forEach(function(curPromise){ // create sequence of promises to act on each one in succession
+                sequence = sequence.then(function(){
+                    return curPromise
+                }).then(function(url){
+                    var dog = document.createElement('img')
+                    dog.setAttribute('src', url)
+                    doggyplayground3.appendChild(dog)
+                }).catch(function(err){
+                    console.log(err + ' failed to load!')
+                })
+            })
+        }
+
+        function demo1(){
+            var doggies = ['dog1.png', 'dog2.png', 'dog3.png', 'dog4.png', 'dog5.png']
+            doggyplayground.innerHTML = ''
+            displayimages(doggies)
+        }
+
+        function demo2(){
+            var doggies = ['dog1.png', 'dog2.png', 'dog3.png', 'dog4.png', 'dog5.png']
+            doggyplayground2.innerHTML = 'Fetching doggies...'
+            displayimagesAtOnce(doggies)
+        }
+
+        function demo3(){
+            var doggies = ['dog1.png', 'dog2.png', 'dog3.png', 'dog4.png', 'dog5.png']
+            doggyplayground3.innerHTML = ''
+            displayimagesBestofBothWorlds(doggies)
+        }
+
+    </script>
+
+</head>
+<body>
+<div id="maincontainer">
+
+    <div id="topsection">
+
+        <div id="pathlinks"><a href="http://www.javascriptkit.com">Home</a>
+            <img border="0" src="../jkincludes/arrow.gif" width="15" height="18">
+            <a href="http://www.javascriptkit.com/javatutors/">JavaScript Tutorials</a>
+            <img border="0" src="../jkincludes/arrow.gif" width="15" height="18">
+            Beginner's Guide to JavaScript promises</div>
+        <p>
+            <!-- BuySellAds Ad Code -->
+            <script type="text/javascript">
+                (function(){
+                    var bsa = document.createElement('script');
+                    bsa.type = 'text/javascript';
+                    bsa.async = true;
+                    bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+                    (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+                })();
+            </script>
+            <!-- End BuySellAds Ad Code -->
+
+
+            <script type="text/javascript" src="http://www.javascriptkit.com/jkincludes/syntaxhighlight/shCore.js"></script>
+            <script type="text/javascript" src="http://www.javascriptkit.com/jkincludes/syntaxhighlight/shBrushJScript.js"></script>
+            <link href="http://www.javascriptkit.com/jkincludes/syntaxhighlight/shCore.css" rel="stylesheet" type="text/css" />
+            <link href="http://www.javascriptkit.com/jkincludes/syntaxhighlight/shThemeDefault.css" rel="stylesheet" type="text/css" />
+
+            <script type="text/javascript">
+                SyntaxHighlighter.all()
+            </script>
+
+        <form id="jksitesearch" method="get" action="http://www.javascriptkit.com/cgi-bin/search/search.cgi" class="zoom_searchform" style="text-align:right" onSubmit="if (this.zoom_query.value=='' || this.zoom_query.value=='Search JavaScript Kit'){alert('Please enter a search term first!'); return false}">
+            <input type="text" name="zoom_query" id="zoom_query" size="20" value="Search JavaScript Kit" class="zoom_searchbox" />
+            <input class="zoom_button" type="image" src="http://www.javascriptkit.com/jkincludes/search.gif" title="Search JK" />
+            <input name="zoom_per_page" id="zoom_per_page" type="hidden" value="10" />
+            <input name="zoom_and" id="zoom_and" type="hidden" value="1" />
+            <input type="hidden" name="zoom_sort" value="0" />
+
+            <div id="jksitesearch_cat">
+                <b>Categories:</b> <input type="checkbox" name="zoom_cat[]" value="-1" id="searchall" style="margin-left: 5px" /><label for="searchall">All</label> <input type="checkbox" name="zoom_cat[]" id="javascriptssearch" value="0" /><label for="javascriptssearch">Free JS/ Applets</label> <input type="checkbox" name="zoom_cat[]" id="tutorialsearch" value="1" checked="checked" /><label for="tutorialsearch">Tutorials</label> <input type="checkbox" name="zoom_cat[]" id="referencesearch" value="2" /><label for="referencesearch">References</label>
+            </div>
+
+        </form>
+
+
+        <div id="bannerarea">
+            <script type="text/javascript" src="http://www.javascriptkit.com/adbanner.js"></script>
+        </div>
+
+    </div>
+
+    <div id="contentwrapper">
+        <div id="contentcolumn">
+            <h3 align="left">Beginner's Guide to JavaScript promises</h3>
+            <p align="left"><b><i>Created: Sept 21st, 2015</i></b></p>
+            <p align="left">
+            </p>
+            <p align="left">JavaScript Promises are a new addition to ECMAscript 6 that aims
+                to provide a cleaner, more intuitive way to deal with the completion (or
+                failure) of asynchronous tasks. Up until JavaScript Promises, that job is taken
+                on by JavaScript event handlers (ie: <code>image.onload</code>) and callback
+                functions, popularized by libraries such as jQuery and Node.js, with varying
+                degrees of frustration. Event handlers work well with individual elements, but
+                what if you wanted to, for example, be notified when a collection of images have
+                all been loaded or the order in which they happened? Call back functions that
+                you pass as the last parameter to methods that support it such as jQuery's <code>
+                    animate()</code> function perform their job admirably for running custom code
+                when a task is complete, but what if the custom code in itself also needs to
+                call <code>
+                    animate()</code> with another call back function, and so on? You end up with
+                what's called &quot;callback hell&quot;, or a growing stack of call back functions
+                resembling the Tower of Babel.</p>
+            <p align="left">JavaScript Promises provide a mechanism for tracking the state
+                of an asynchronous task with more robustness and less chaos. But first thing's
+                first.</p>
+            <h3 align="left">
+                <img border="0" src="../Red_CurlyC035.gif" width="16" height="17"> JavaScript
+                Promises support and Polyfill</h3>
+            <p align="left">JavaScript Promises are part of the ECMAscript 6 standards and
+                should be supported by all browsers eventually. At the moment that promise is
+                already realized in recent versions of Chrome, FF, Safari, and on mobile
+                browsers with the exception of IE. Check out
+                <a target="_blank" href="http://caniuse.com/#feat=promises">
+                    this page</a> for the skinny. Due to the absence of IE including IE11 in the green
+                column, you can use a Polyfill such as
+                <a target="_blank" href="https://github.com/jakearchibald/es6-promise">
+                    es6-promise.js</a> to bridge the gap until IE catches up with the rest of the herd.
+                Just download
+                <b>
+                    <a href="https://raw.githubusercontent.com/jakearchibald/es6-promise/master/dist/es6-promise.min.js">
+                        es6-promise-min.js</a></b> and include it at the top of your page as an external
+                JavaScript, and viola!</p>
+            <h3 align="left">
+                <img border="0" src="../Red_CurlyC035.gif" width="16" height="17"> The syntax</h3>
+            <p align="left">Ok, lets get down to business now. At the heart of JavaScript
+                Promises is the Promise constructor function, which is called like so:</p>
+            <pre class="brush: js;">var mypromise = new Promise(function(resolve, reject){
+ // asynchronous code to run here
+ // call resolve() to indicate task successfully completed
+ // call reject() to indicate task has failed
+})</pre>
+            <p align="left">It is passed an anonymous function with two parameters- a
+                <code>resolve()</code> method that you call at some point to set the state of the promise
+                to <b><i>fulfilled</i></b>, and <code>reject()</code> to set it to <b><i>rejected</i></b>
+                instead. A Promise object starts out with a state of <i><b>pending</b></i>, to
+                indicate the asynchronous code it's monitoring has neither completed (fulfilled)
+                or failed (rejected). Lets get our first taste of JavaScript Promises in action
+                with a function that dynamically loads an image based on the image URL:</p>
+            <pre class="brush: js;">function getImage(url){
+	return new Promise(function(resolve, reject){
+		var img = new Image()
+		img.onload = function(){
+			resolve(url)
+		}
+		img.onerror = function(){
+			reject(url)
+		}
+		img.src = url
+	})
+}</pre>
+            <p align="left">The <code>getImage()</code> function returns a Promise object that keeps
+                track of the state of the image load. When you call:</p>
+            <pre class="brush: js;">getImage('doggy.gif')</pre>
+            <p align="left">its promise object goes from the initial state of &quot;pending&quot; to
+                either fulfilled or rejected eventually depending on the outcome of the image
+                load. Notice how we've passed the URL of the image to both the <code>resolve()</code> and
+                <code>reject()</code> method of Promise; this could be any data you wish to be processed
+                further depending on the outcome of the task. More on this later.</p>
+            <p align="left">Ok, at this point Promises may just seem like a pointless
+                exercise to set some object's state to indicate the status of a task. But as
+                you'll soon see, with this mechanism comes the ability to easily and intuitively
+                define what happens next once the task is completed.</p>
+            <h3 align="left">
+                <img border="0" src="../Red_CurlyC035.gif" width="16" height="17"> The then()
+                and catch() methods</h3>
+            <p align="left">Whenever you instantiate a Promise object, two methods- <code>
+                then()</code> and <code>catch()</code>- become available to decide what happens
+                next after the conclusion of an asynchronous task. Take a look at the below:</p>
+            <pre class="brush: js;">getImage('doggy.jpg').then(function(successurl){
+	document.getElementById('doggyplayground').innerHTML = '&lt;img src=&quot;' + successurl + '&quot; /&gt;'
+})</pre>
+            <p align="left">Here as soon as &quot;doggy.jpg&quot; has loaded, we specify that the
+                image be shown inside the &quot;<code>doggyplayground</code>&quot; DIV. The original <code>
+                    getImage()</code> function returns a Promise object, so we can call <code>then()</code>
+                on it to specify what happens when the request has been <b>resolved</b>. The URL
+                of the image we passed into the <code>resolve()</code> function when we created
+                <code>getImage()</code> becomes available as the parameter inside the <code>
+                    then()</code> function.</p>
+            <p align="left">What happens if the image failed to load? The <code>then()</code> method can
+                accept a 2nd function to deal with the <b>rejected</b> state of the Promise
+                object:</p>
+            <pre class="brush: js;">getImage('doggy.jpg').then(
+	function(successurl){
+		document.getElementById('doggyplayground').innerHTML = '&lt;img src=&quot;' + successurl + '&quot; /&gt;'
+	},
+	function(errorurl){
+		console.log('Error loading ' + errorurl)
+	}
+)</pre>
+            <p align="left">In such a construct, if the image loads, the first function
+                inside <code>then()</code> is run, if it fails, the 2nd instead. We can also handle errors
+                using the <code>catch()</code> method instead:</p>
+            <pre class="brush: js;">getImage('doggy.jpg').then(function(successurl){
+	document.getElementById('doggyplayground').innerHTML = '&lt;img src=&quot;' + successurl + '&quot; /&gt;'
+}).catch(function(errorurl){
+	console.log('Error loading ' + errorurl)
+})</pre>
+            <p align="left">Calling <code>catch()</code> is equivalent to calling <code>then(undefined,
+                function)</code>, so the above is the same as:</p>
+            <pre class="brush: js;">getImage('doggy.jpg').then(function(successurl){
+	document.getElementById('doggyplayground').innerHTML = '&lt;img src=&quot;' + successurl + '&quot; /&gt;'
+}).then(undefined, function(errorurl){
+	console.log('Error loading ' + errorurl)
+})</pre>
+            <h3 align="left">
+                <img border="0" src="../Red_CurlyC035.gif" width="16" height="17"> Using
+                recursion to load and display images sequentially</h3>
+            <p align="left">Lets say we have an array of images we want to load and display
+                sequentially- that is to say, first load and show image1, and once that's
+                complete, go on to image2, and so on. We'll talk about <b>chaining promises</b>
+                together further below to accomplish this, but one approach is
+                just to use recursion to go through the list of images, calling our <code>getImage()</code>
+                function each time with a <code>then()</code> method that shows the current image before
+                calling <code>getImage()</code> again until all of the images have been processed. Here is
+                the code:</p>
+            <pre class="brush: js;">var doggyplayground = document.getElementById('doggyplayground')
+var doggies = ['dog1.png', 'dog2.png', 'dog3.png', 'dog4.png', 'dog5.png']
+
+function displayimages(images){
+	var targetimage = images.shift() // process doggies images one at a time
+	if (targetimage){ // if not end of array
+		getImage(targetimage).then(function(url){ // load image then...
+			var dog = document.createElement('img')
+			dog.setAttribute('src', url)
+			doggyplayground.appendChild(dog) // add image to DIV
+			displayimages(images) // recursion- call displayimages() again to process next image/doggy
+		}).catch(function(url){ // handle an image not loading
+			console.log('Error loading ' + url)
+			displayimages(images) // recursion- call displayimages() again to process next image/doggy
+		})
+	}
+}
+
+displayimages(doggies)</pre>
+            <p align="left"><b>Demo (fetch and display images sequentially):</b></p>
+            <div id="doggyplayground" class="demoarea">&nbsp;</div>
+            <p align="left">
+                <button onClick="demo1()">Get images</button></p>
+            <p align="left">The <code>displayimages()</code> function takes an array of images and
+                sequentially goes through each image, by calling <code>
+                    <a target="_blank" href="http://www.javascriptkit.com/jsref/arrays.shtml">
+                        images.shift()</a></code>. For each image, we first call <code>getImage()</code> to fetch the image,
+                then the returned Promise object's <code>then()</code> method to specify what happens next,
+                in this case, add the image to the <code>doggyplayground</code> DIV before calling
+                <code>displayimages()</code> again. In the case of an image failing to load, the
+                <code>catch()</code>
+                method handles those instances. The recursion stops when the doggies array is
+                empty, after <code>Array.shift()</code> has gone through all of its elements.</p>
+            <p align="left">Using recursion with JavaScript Promises is one way to
+                sequentially process a series of asynchronous tasks. Another more versatile
+                method is by learning the art of chaining promises. Lets see what that's all
+                about now.</p>
+            <h3 align="left">
+                <img border="0" src="../Red_CurlyC035.gif" width="16" height="17"> Chaining
+                Promises</h3>
+            <p align="left">We already know that the <code>then()</code> method can be invoked on a
+                Promise instance to specify what happens after the completion of a task.
+                However, we can in fact chain multiple <code>then()</code> methods together, in turn chaining
+                multiple promises together, to specify what happens after each promise has been
+                resolved, in sequence. Using our trusted <code>getImage()</code> function to illustrate, the
+                following fetches one image before fetching another:</p>
+            <pre class="brush: js;">getImage('dog1.png').then(function(url){
+	console.log(url + ' fetched!')
+	return getImage('dog2.png')
+}).then(function(url){
+	console.log(url + ' fetched!')
+})
+
+//Console log:
+// dog1.png fetched
+// dog2.png fetched!</pre>
+            <p align="left">So what's going on here? Notice inside the first <code>then()</code> method,
+                the line:</p>
+            <pre class="brush: js;">return getImage('dog2.png')</pre>
+            <p align="left">This fetches &quot;dog2.png&quot; and returns a Promise object. By
+                returning a Promise object inside <code>then()</code>, the next <code>then()</code> waits for that promise
+                to resolve before running, accepting as its parameter the data passed on by the
+                new Promise object. <b>This is the key to chaining multiple promises together- by
+                    returning another promise inside the <code>then()</code> method.</b></p>
+            <p align="left">Note that we can also simply return a static value inside
+                <code>then()</code>, which would simply be carried on and executed immediately by the next
+                <code>then()</code> method as its parameter value.</p>
+            <p align="left">With the above example we still want to account for an image not loading, so we'll include the
+                <code>catch()</code> method as well:</p>
+            <pre class="brush: js;">getImage('baddog1.png').then(function(url){
+	console.log(url + ' fetched!')
+}).catch(function(url){
+	console.log(url + ' failed to load!')
+}).then(function(){
+	return getImage('dog2.png')
+}).then(function(url){
+	console.log(url + ' fetched!')
+}).catch(function(url){
+	console.log(url + ' failed to load!')
+})
+
+//Console log:
+// baddog1.png failed to load!
+// dog2.png fetched!</pre>
+            <p align="left">Recall that <code>catch()</code> is synonymous with <code>then(undefined,
+                functionref)</code>, so after <code>catch()</code> the next <code>then()</code> will still be executed.
+                Notice the organization of the <code>then()</code> and <code>catch()</code> methods- we put the return of
+                the next promise object (or link in the chain) inside its own <code>then()</code> method,
+                after the outcome of the previous promise is completely accounted for via the
+                <code>then()</code> and <code>catch()</code> method proceeding it.</p>
+            <p align="left">If you wanted to load 3 images in succession, for example, we
+                could just add another set of <code>then()</code> <code>then()</code> <code>catch()</code> to the above code.</p>
+            <h3 align="left">
+                <img border="0" src="../Red_CurlyC035.gif" width="16" height="17"> Creating a
+                sequence of Promises</h3>
+            <p align="left">Ok, so we know the basic idea of chaining promises together is
+                to return another promise inside the <code>then()</code> method. But manually chaining
+                promises together can quickly become unmanageable. For longer chains, what we
+                need is a way to start with an empty Promise object and programmatically pile on
+                the desired <code>then()</code> and <code>catch()</code> methods to form the final sequence of promises.
+                In JavaScript Promises, we can create a blank Promise object that's <b>resolved</b>
+                to begin with with the line:</p>
+            <pre class="brush: js;">var resolvedPromise = Promise.resolve()</pre>
+            <p align="left">There is also <code>Promise.reject()</code> to create a blank
+                Promise object that's already in the rejected state. So why would we want a new
+                Promise object that's already resolved you may ask? Well, it makes for a perfect
+                Promise object to chain additional promises together, since an already resolved
+                Promise object will automatically jump to the first <code>then()</code> method added to it,
+                and kick start the chain of events.</p>
+            <p align="left">We can use a resolved Promise object to create a sequence of
+                promises, by piling on <code>then()</code> and <code>catch()</code>&nbsp; methods to it. For example:</p>
+            <pre class="brush: js;">var sequence = Promise.resolve()
+var doggies = ['dog1.png', 'dog2.png', 'dog3.png', 'dog4.png', 'dog5.png']
+
+doggies.forEach(function(targetimage){
+	sequence = sequence.then(function(){
+		return getImage(targetimage)
+	}).then(function(url){
+		console.log(url + ' fetched!')
+	}).catch(function(err){
+		console.log(err + ' failed to load!')
+	})
+})
+
+//Console log:
+// dog1.png fetched
+// dog2.png fetched!
+// dog3.png fetched!
+// dog4.png fetched!
+// dog5.png fetched!</pre>
+            <p align="left">First we create a resolved Promise object called <code>sequence</code>,
+                then go through each element inside the <code>doggies[]</code> array with <code>forEach()</code>,
+                adding to <code>sequence</code> the required <code>then()</code> and <code>catch()</code> methods to
+                handle each image after it's loaded. The result is a series of <code>then()</code> and
+                <code>catch()</code> methods attached to <code>sequence</code>, creating the desired timeline of loading
+                each image one at a time.</p>
+            <p align="left">In case you're wondering, instead of using <code>forEach()</code> to cycle
+                through the image array, you can also use a simple <code>for</code> loop instead, though&nbsp;the
+                result may be more than you had bargained for:</p>
+            <pre class="brush: js;">var sequence = Promise.resolve()
+var doggies = ['dog1.png', 'dog2.png', 'dog3.png', 'dog4.png', 'dog5.png']
+
+for (var i=0; i&lt;doggies.length; i++){
+	(function(){ // define closure to capture i at each step of loop
+		var capturedindex = i
+		sequence = sequence.then(function(){
+			return getImage(doggies[capturedindex])
+		}).then(function(url){
+			console.log(url + ' fetched!')
+		}).catch(function(err){
+			console.log('Error loading ' + err)
+		})
+	}()) // invoke closure function immediately
+}
+
+//Console log:
+// dog1.png fetched
+// dog2.png fetched!
+// dog3.png fetched!
+// dog4.png fetched!
+// dog5.png fetched!</pre>
+            <p align="left">Inside the<code> for</code> loop, to properly get the value of
+                <code>i</code> at each step
+                and pass it into <code>then()</code>, we need to create an outer closure to capture each
+                value of <code>i</code>. Without the outer closure, the value of <code>i</code> passed into
+                <code>then()</code> each
+                time will simply be the value of <code>i</code> when it's reached the end of the loop, or
+                <code>doggies.length-1</code>. If all of this confounds you, the article
+                <a target="_blank" href="http://www.mennovanslooten.nl/blog/post/62">JavaScript
+                    closures in for loops</a> should help clear the air.</p>
+            <h3 align="left">
+                <img border="0" src="../Red_CurlyC035.gif" width="16" height="17"> Creating an
+                array of promises</h3>
+            <p align="left">Instead of chaining promises together, we can also create an
+                array of promises. This makes it easy to do something after all of the
+                asynchronous tasks have completed, instead of after each task. For example, the
+                following uses <code>getImage()</code> to fetch two images and store them as an array of
+                promises:</p>
+            <pre class="brush: js;">var twodoggypromises = [getImage('dog1.png'), getImage('dog2.png')]</pre>
+            <p align="left">Since <code>getImage()</code> when called returns a promise,
+                <code>twodoggypromises</code> now
+                contains two Promise objects. So what can we do with an array of promises? Well,
+                we can then use the static method <code>Promise.all()</code> to do something after all
+                promises inside the array have resolved:</p>
+            <pre class="brush: js;">Promise.all(twodoggypromises).then(function(urls){
+	console.log(urls) // logs ['dog1.png', 'dog2.png']
+}).catch(function(urls){ // if any image fails to load, then() is skipped and catch is called
+	console.log(urls) // returns array of images that failed to load
+})</pre>
+            <p align="left"><code>Promise.all()</code> takes an
+                <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols">
+                    iterable</a> (array or array-like list) of promise objects, and waits until all
+                of those promises have been fulfilled before moving on to any <code>then()</code>
+                method attached to it. The <code>then()</code> method is passed an array of returned
+                values from each promise.</p>
+            <p align="left">So what happens if one of the promises inside the array doesn't
+                resolve (is rejected)? In that case the entire <code>then()</code> portion is ignore, and
+                <code><cdoe>catch()</code> is executed instead. So in the above scenario, if one or more of the
+                images fails to load, it only logs an array of images that failed to load inside
+                <code>catch()</code>.</p>
+            <h3 align="left">
+                <img border="0" src="../Red_CurlyC035.gif" width="16" height="17"> Displaying
+                images when they have all been fetched</h3>
+            <p align="left">It's high time now to see an example of showing off all the
+                doggies when they have been fetched, instead of one at a time. We'll use
+                <code>Array.map()</code> to ease the pain in creating a promise array:</p>
+            <pre class="brush: js;highlight:[2]">var doggies = ['dog1.png', 'dog2.png', 'dog3.png', 'dog4.png', 'dog5.png']
+var doggypromises = doggies.map(getImage) // call getImage on each array element and return array of promises
+
+Promise.all(doggypromises).then(function(urls){
+	for (var i=0; i&lt;urls.length; i++){
+		var dog = document.createElement('img')
+		dog.setAttribute('src', urls[i])
+		doggyplayground.appendChild(dog)
+	}
+}).catch(function(urls){
+	console.log(&quot;Error fetching some images: &quot; + urls)
+})</pre>
+            <p align="left"><code>
+                <a target="_blank" href="http://www.javascriptkit.com/jsref/arrays.shtml">
+                    Array.map()</a></code> iterates through the original array and calls <code>getImage()
+            </code>on each element, returning a new array using the return value of <code>getImage()</code> at
+                each step, or a promise. The result is twofold- each image gets fetched, and in
+                turn we get back an array of corresponding promises. Then, we put <code>Promise.all()</code>
+                to work, passing in <code>doggypromises</code> to show all the images at once:</p>
+            <p align="left"><b>Demo (fetch and display images at all once):</b></p>
+            <div id="doggyplayground2" class="demoarea">&nbsp;</div>
+            <p align="left">
+                <button onClick="demo2()">Get images</button></p>
+            <h3 align="left">
+                <img border="0" src="../Red_CurlyC035.gif" width="16" height="17"> Fetch images
+                all at once, but display then in sequence as each one becomes ready</h3>
+            <p align="left">Finally, as if the dogs haven't been paraded enough, lets
+                introduce them to the doggy park in an optimized manner, not one by one, not all
+                at once, but the best of both words. We'll fetch all of the images at once to
+                take advantage of parallel downloading in browsers, but show them in sequence as
+                each one becomes available (fetched). This minimizes the time the doggies show
+                up while still showing them in orderly sequence. </p>
+            <p align="left">To do this, we just have to do two things we already know-
+                create an array of promises to fetch all images at once (in parallel), then
+                create a sequence of promises to actually show each image one at a time:</p>
+            <pre class="brush: js;">var doggies = ['dog1.png', 'dog2.png', 'dog3.png', 'dog4.png', 'dog5.png']
+var doggypromises = doggies.map(getImage) // call getImage on each array element and return array of promises
+var sequence = Promise.resolve()
+
+doggypromises.forEach(function(curPromise){ // create sequence of promises to act on each one in succession
+	sequence = sequence.then(function(){
+		return curPromise
+	}).then(function(url){
+		var dog = document.createElement('img')
+		dog.setAttribute('src', url)
+		doggyplayground.appendChild(dog)
+	}).catch(function(err){
+		console.log(err + ' failed to load!')
+	})
+})</pre>
+            <p align="left"><b>Demo (fetch images all at once in parallel, but show them
+                sequentially):</b></p>
+            <div id="doggyplayground3" class="demoarea">&nbsp;</div>
+            <p align="left">
+                <button onClick="demo3()">Get images</button></p>
+            <p align="left">Note that to create our sequence of promises this time, we
+                iterate through the array of promises generated by <code>Array.map()</code>, and
+                not the images array directly. This allows us to create the chain of promises
+                without having to call <code>getImage()</code> each time again, which was done
+                when we decided to fetch all images at once using <code>Array.map()</code>
+                already.</p>
+            <h3 align="left">
+                <img border="0" src="../Red_CurlyC035.gif" width="16" height="17"> In conclusion</h3>
+            <p align="left">JavaScript Promises offers an additional way to handle
+                asynchronous tasks at a time where such tasks are becoming intimately woven into
+                the fabric of any modern web site. Used in conjunction with a
+                <a href="http://caniuse.com/#feat=promises">Polyfill</a>, JavaScript Promises
+                can be put to work today to make the whole affair more intuitive and manageable.
+                Hopefully this tutorial has opened the doors to showing you how just to do that.
+                Check out the following additional resources for more helpful info on the new
+                feature:</p>
+            <ul>
+                <li>
+                    <p align="left">
+                        <a target="_blank" href="http://www.html5rocks.com/en/tutorials/es6/promises/">
+                            JavaScript Promises @ HTML5 Rocks</a></p></li>
+                <li>
+                    <p align="left">
+                        <a target="_blank" href="http://www.javascriptkit.com/jsref/promises.shtml">JavaScript Promises Reference</a></p></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="leftcolumn">
+        <div class="sidemenucomponent">
+            <div><a href="http://www.javascriptkit.com">
+                <img src="http://www.javascriptkit.com/jkincludes/jklogosmall.gif" border="0" title="JavaScript Kit" width="163" height="51" style="margin-top: 2px" /></a>
+            </div>
+
+
+            <ul id="mainmenulinks" class="categorylinks">
+                <li><a href="http://www.javascriptkit.com/" >JavaScript Kit</a></li>
+                <li><a href="http://www.javascriptkit.com/cutpastejava.shtml" >Free JavaScripts</a></li>
+                <li><a href="http://www.javascriptkit.com/javatutors/">JavaScript tutorials</a></li>
+                <li><a href="http://www.javascriptkit.com/jsref/">JavaScript Reference</a></li>
+                <li><a href="http://www.javascriptkit.com/domref/">DOM Reference</a></li>
+                <li><a href="http://www.javascriptkit.com/dhtmltutors/">Developer & CSS</a></li>
+                <li><a href="http://www.javascriptkit.com/howto/">Web Design</a></li>
+                <li><a href="http://www.javascriptkit.com/java/">Free Java Applets</a></li>
+                <li><a href="http://www.javascriptkit.com/dhtmltutors/cssreference.shtml">CSS Quick Reference</a></li>
+                <li><a href="http://www.dynamicdrive.com/forums/forumdisplay.php?7-JavaScript">JavaScript Forums</a></li>
+            </ul>
+
+
+            <div class="headers">Partners</div>
+            <ul class="linkslist">
+                <li><a href="http://www.cssdrive.com">CSS Drive</a></li>
+                <li><a href="http://www.dynamicdrive.com/dynamicindex1/">JavaScript Menus</a></li>
+                <li><a href="http://www.dynamicdrive.com/style/">CSS codes & examples</a></li>
+            </ul>
+
+            <script type="text/javascript">
+                var sectionmatch=["cutpastejava", "javatutors", "jsref", "dhtmltutors", "howto", "java", "cssref"]
+                var docurl=window.location.toString()
+                var menulinksobj=document.getElementById("mainmenulinks")
+                if (menulinksobj && menulinksobj.getElementsByTagName("a")){
+                    for (i=0; i<sectionmatch.length; i++){
+                        if (docurl.indexOf(sectionmatch[i])!=-1 && menulinksobj.getElementsByTagName("a")[i+1].style){
+                            menulinksobj.getElementsByTagName("a")[i+1].style.color="#3A6200"
+                            menulinksobj.getElementsByTagName("a")[i+1].style.backgroundColor="#EAEAEA"
+                            break;
+                        }
+                    }
+                }
+
+            </script>
+
+        </div>
+
+        <div id="stickyarea">
+
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- JK RA horizontal -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-7051847089736268"
+                 data-ad-slot="9662634634"
+                 data-ad-format="auto"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+            <!-- BuySellAds Zone Code -->
+            <div class="bsacontainer nomargin">
+                <div id="bsap_1299814" class="bsarocks bsap_dd6e9fbb78d92ec298f6119b05509777"></div>
+            </div>
+            <!-- End BuySellAds Zone Code -->
+
+
+            <div class="sidemenucomponent">
+
+                <div style="font-size: 12px; margin-top: 1em; padding-left: 5px;">
+                    <script type="text/javascript">
+                        bookmarkit()
+                    </script>
+                </div>
+
+            </div>
+
+            <!-- Go to www.addthis.com/dashboard to customize your tools -->
+            <div class="addthis_sharing_toolbox" style="margin-left:10px"></div>
+
+            <!-- Go to www.addthis.com/dashboard to customize your tools -->
+            <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=georgeuser"></script>
+
+            <div id="sharearea" style="font-size: 12px; margin: 1em auto; padding-left: 5px; text-align:center">
+                <a href="https://twitter.com/share" class="twitter-share-button" data-size="large" data-show-count="false">Tweet</a><script async src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+
+            <!-- end sticky area -->
+        </div>
+
+        <script>
+
+            ;(function(){
+
+                var rightcolumnad = document.getElementById('stickyarea')
+                var standardbody = (document.compatMode=="CSS1Compat")? document.documentElement : document.body
+
+                function getoffset(what, offsettype){
+                    return (what.offsetParent)? what[offsettype]+getoffset(what.offsetParent, offsettype) : what[offsettype]
+                }
+
+                function getoffsetof(el){
+                    el._offsets={left:getoffset(el, "offsetLeft"), top:getoffset(el, "offsetTop"), h: el.offsetHeight}
+                }
+
+                var jkmakesticky = {
+                    target: null,
+                    docheight: null,
+                    docscrollHeight: null,
+                    contentcolumnheight: null,
+                    rightcolumnheight: null,
+                    resizeTimer: null,
+                    refreshCoords: function(){
+                        this.docheight = window.innerHeight || standardbody.clientHeight-15
+                        this.docscrollHeight = standardbody.scrollHeight-20
+                        this.contentcolumnheight = document.getElementById("contentcolumn").offsetHeight
+                        this.rightcolumnheight = document.getElementById("leftcolumn").offsetHeight
+                        getoffsetof( this.target )
+                    },
+                    stickit: function(){
+                        var target = this.target
+                        var offsettop = target._offsets.top
+                        if (offsettop == 0 || ( this.rightcolumnheight >= this.contentcolumnheight)){ // if offsettop of banner container is 0, it means it's hidden, or if right column is longer than content column
+                            return
+                        }
+                        var docscrolly = window.pageYOffset || standardbody.scrollTop
+                        if ( docscrolly > offsettop){
+                            if (!/sticky/i.test(target.className)){
+                                target.className = target.className + 'sticky'
+                            }
+                        }
+                        else{
+                            if (/sticky/i.test(target.className)){
+                                target.className = target.className.replace(/\s*sticky\s*/i, '')
+                            }
+                        }
+                    },
+                    init:function(target){
+                        this.target = target
+                        this.refreshCoords()
+                        window.addEventListener('scroll', function(){
+                            requestAnimationFrame(function(){
+                                jkmakesticky.stickit()
+                            })
+                        }, false)
+                    }
+                }
+
+                if (rightcolumnad){
+                    jkmakesticky.init( rightcolumnad )
+                    jkmakesticky.stickit()
+                    window.addEventListener('load', function(e){
+                        rightcolumnad.className = rightcolumnad.className.replace(/\s*sticky\s*/i, '')
+                        jkmakesticky.refreshCoords()
+                        jkmakesticky.stickit()
+                    }, false)
+                    window.addEventListener('resize', function(e){
+                        clearTimeout(jkmakesticky.resizeTimer)
+                        jkmakesticky.resizeTimer = setTimeout(function(){
+                            rightcolumnad.className = rightcolumnad.className.replace(/\s*sticky\s*/i, '')
+                            jkmakesticky.refreshCoords()
+                            jkmakesticky.stickit()
+                        }, 100)
+                    }, false)
+                }
+
+            })();
+
+        </script>
+
+    </div>
+
+    <div id="footer">
+        <!--ZOOMSTOP-->
+
+        <p align="center">
+
+        <div style="max-width: 730px; margin-left: 185px;" id="footerad">
+
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- JK RA horizontal -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-7051847089736268"
+                 data-ad-slot="9662634634"
+                 data-ad-format="horizontal, rectangle"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+
+        </div>
+
+        <script>
+
+            var showdiscussarea = (function(){
+                    var multipagetutorial = !!document.getElementById('toc') // Bool to detect whether this page is part of multi pages tutorial
+                    var showdiscussarea = !multipagetutorial
+                    if (multipagetutorial){
+                        var toc = document.getElementById('toc')
+                        var toclis = toc.getElementsByTagName('li')
+                        var lastli = toclis[ toclis.length -1 ]
+                        if (lastli.firstChild.tagName !='A' ) // if this is last page in tutorial
+                            showdiscussarea = true
+                    }
+                    return showdiscussarea
+                })()
+
+                    /*
+                     disqusLoader.js v1.0
+                     A JavaScript plugin for lazy-loading Disqus comments widget.
+                     -
+                     By Osvaldas Valutis, www.osvaldas.info
+                     Available for use under the MIT License
+                     */
+
+            ;( function( window, document, index )
+            {
+                'use strict';
+
+                var extendObj = function( defaults, options )
+                    {
+                        var prop, extended = {};
+                        for( prop in defaults )
+                            if( Object.prototype.hasOwnProperty.call( defaults, prop ))
+                                extended[ prop ] = defaults[ prop ];
+
+                        for( prop in options )
+                            if( Object.prototype.hasOwnProperty.call( options, prop ))
+                                extended[ prop ] = options[ prop ];
+
+                        return extended;
+                    },
+                    getOffset = function( el )
+                    {
+                        var rect = el.getBoundingClientRect();
+                        return { top: rect.top + document.body.scrollTop, left: rect.left + document.body.scrollLeft };
+                    },
+                    loadScript = function( url, callback )
+                    {
+                        var script	 = document.createElement( 'script' );
+                        script.src	 = url;
+                        script.async = true;
+                        script.setAttribute( 'data-timestamp', +new Date());
+                        script.addEventListener( 'load', function()
+                        {
+                            if( typeof callback === 'function' )
+                                callback();
+                        });
+                        ( document.head || document.body ).appendChild( script );
+                    },
+                    throttle		= function(a,b){var c,d;return function(){var e=this,f=arguments,g=+new Date;c&&g<c+a?(clearTimeout(d),d=setTimeout(function(){c=g,b.apply(e,f)},a)):(c=g,b.apply(e,f))}},
+
+                    throttleTO		= false,
+                    laziness		= false,
+                    disqusConfig	= false,
+                    scriptUrl		= false,
+
+                    scriptStatus	= 'unloaded',
+                    instance		= false,
+
+                    init = function()
+                    {
+                        if( !instance || !document.body.contains( instance ) || instance.disqusLoaderStatus == 'loaded' )
+                            return true;
+
+                        var winST	= window.pageYOffset,
+                            offset	= getOffset( instance ).top;
+
+                        // if the element is too far below || too far above
+                        if( offset - winST > window.innerHeight * laziness || winST - offset - instance.offsetHeight - ( window.innerHeight * laziness ) > 0 )
+                            return true;
+
+                        var tmp = document.getElementById( 'disqus_thread' );
+                        if( tmp ) tmp.removeAttribute( 'id' );
+                        instance.setAttribute( 'id', 'disqus_thread' );
+                        instance.disqusLoaderStatus = 'loaded';
+
+                        if( scriptStatus == 'loaded' )
+                        {
+                            DISQUS.reset({ reload: true, config: disqusConfig });
+                        }
+                        else // unloaded | loading
+                        {
+                            window.disqus_config = disqusConfig;
+                            if( scriptStatus == 'unloaded' )
+                            {
+                                scriptStatus = 'loading';
+                                loadScript( scriptUrl, function()
+                                {
+                                    scriptStatus = 'loaded';
+                                });
+                            }
+                        }
+                    };
+
+                window.addEventListener( 'scroll', throttle( throttleTO, init ));
+                window.addEventListener( 'resize', throttle( throttleTO, init ));
+
+                window.disqusLoader = function( element, options )
+                {
+                    options = extendObj(
+                        {
+                            laziness:		1,
+                            throttle:		250,
+                            scriptUrl:		false,
+                            disqusConfig:	false,
+
+                        }, options );
+
+                    laziness		= options.laziness + 1;
+                    throttleTO		= options.throttle;
+                    disqusConfig	= options.disqusConfig;
+                    scriptUrl		= scriptUrl === false ? options.scriptUrl : scriptUrl; // set it only once
+
+                    if( typeof element === 'string' )				instance = document.querySelector( element );
+                    else if( typeof element.length === 'number' )	instance = element[ 0 ];
+                    else											instance = element;
+
+                    instance.disqusLoaderStatus = 'unloaded';
+
+                    init();
+                };
+
+            }( window, document, 0 ));
+
+        </script>
+
+
+        <div id="discussarea">
+            <h3 id="discusscommentheader" style="display:none">Comments- Your Turn!</h3>
+            <div id="disqus_thread" class="discussclass"></div>
+        </div>
+
+        <script>
+
+            var disqusoptions ={
+                scriptUrl: '//javascriptkit.disqus.com/embed.js',
+                /*
+                 @type: string (url)
+                 @default: none
+                 @required
+                 URL of Disqus' executive JS file. The value is memorized on the first function call
+                 and ignored otherwise because Disqus allows only one instance per page at the time.
+                 */
+
+                laziness: 1,
+                /*
+                 @type: int (>=0)
+                 @default: 1
+                 Sets the laziness of loading the widget: (viewport height) * laziness . For example:
+                 0 - widget load starts when at the least a tiny part of it gets in the viewport;
+                 1 - widget load starts when the distance between the widget zone and the viewport is no more than the height of the viewport;
+                 2 - 2x viewports, etc.
+                 */
+
+                throttle: 250,
+                /*
+                 @type: int (milliseconds)
+                 @default: 250
+                 Defines how often the plugin should make calculations during the
+                 processes such as resize of a browser's window or viewport scroll.
+                 250 = 4 times in a second.
+                 */
+
+                /*
+                 @type: function
+                 @default: none
+                 Disqus-native options. Check Disqus' manual for more information.
+                 */
+                disqusConfig: function()
+                {
+                    this.page.title       = document.title;
+                    this.page.url         = window.location.href;
+                    this.page.identifier  = window.location.pathname;
+                }
+            };
+
+            // vanilla
+            if (showdiscussarea){
+                disqusLoader( '.discussclass', disqusoptions );
+                document.getElementById('discusscommentheader').style.display = 'block';
+            }
+        </script>
+
+
+
+        <div style="margin-left:195px; margin-top:6px" id="copyright">Copyright (c) 2016 <a href="http://www.javascriptkit.com">JavaScript Kit</a>. NO PART may be reproduced without author's permission.</div>
+
+        </p>
+
+        <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+        </script>
+        <script type="text/javascript">
+            _uacct = "UA-55377-1";
+            urchinTracker();
+        </script>
+
+        <!-- MailMunch for JavaScript Kit -->
+        <!-- Paste this code right before the </head> tag on every page of your site. -->
+        <script src="//a.mailmunch.co/app/v1/site.js" id="mailmunch-script" data-mailmunch-site-id="283097" async="async"></script>
+
+    </div>
+
+</div>
+
+<p><!--webbot bot="HTMLMarkup" startspan --><script>
+
+    var doggyplayground = document.getElementById('doggyplayground')
+    var doggyplayground2 = document.getElementById('doggyplayground2')
+    var doggyplayground3 = document.getElementById('doggyplayground3')
+
+</script><!--webbot bot="HTMLMarkup" endspan i-checksum="1761" --></p>
+
+</body>
+</html>
+

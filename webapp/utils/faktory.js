@@ -19,7 +19,7 @@ function Factory() {
 
         employee.say = function () {
             log.add(this.type + ": rate " + this.hourly + "/hour");
-        }
+        };
 
         return employee;
     }
@@ -65,6 +65,6 @@ function run() {
     }
 
     log.show();
-}
+};
 
-var xxx =run();
+run();
