@@ -6,7 +6,7 @@
             id="page"
             navButtonPress="onNavPress"
             showNavButton="true"
-            title="Supplier Details">
+            title="{i18n>detailTitle}">
         <content>
             <ObjectHeader
                     id="objectHeader"
